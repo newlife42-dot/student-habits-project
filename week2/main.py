@@ -314,11 +314,79 @@ def handle_missing(df):
 
     return processed_df
 
+def handle_outliers(df):
+    """IQR 방식으로 이상치를 탐지하고 경계값 안으로 클리핑합니다."""
+
+    processed_df = df.copy()
+
+    target_columns = [
+        "sleep_hours",
+        "study_hours",
+        "phone_hours",
+        "exercise_hours",
+    ]
+
+    print("\n" + "=" * 60)
+    print("2. 이상치 처리")
+    print("=" * 60)
+
+    for column in target_columns:
+        if column not in processed_df.columns:
+            print(f"{column}: 컬럼이 존재하지 않습니다.")
+            continue
+
+        # 1사분위수와 3사분위수 계산
+        q1 = processed_df[column].quantile(0.25)
+        q3 = processed_df[column].quantile(0.75)
+
+        # 사분위 범위 계산
+        iqr = q3 - q1
+
+        # 이상치 경계 계산
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+
+        # 처리 전 이상치 개수
+        outlier_count = (
+            (processed_df[column] < lower_bound)
+            | (processed_df[column] > upper_bound)
+        ).sum()
+
+        before_min = processed_df[column].min()
+        before_max = processed_df[column].max()
+
+        # 범위를 벗어난 값을 하한·상한값으로 대체
+        processed_df[column] = processed_df[column].clip(
+            lower=lower_bound,
+            upper=upper_bound,
+        )
+
+        after_min = processed_df[column].min()
+        after_max = processed_df[column].max()
+
+        print(f"컬럼명: {column}")
+        print(f"- Q1: {q1:.2f}")
+        print(f"- Q3: {q3:.2f}")
+        print(f"- IQR: {iqr:.2f}")
+        print(f"- 하한: {lower_bound:.2f}")
+        print(f"- 상한: {upper_bound:.2f}")
+        print(f"- 처리된 이상치: {outlier_count}개")
+        print(f"- 처리 전 범위: {before_min:.2f} ~ {before_max:.2f}")
+        print(f"- 처리 후 범위: {after_min:.2f} ~ {after_max:.2f}")
+        print("-" * 60)
+
+    print("이상치 처리(클리핑) 완료")
+
+    return processed_df
+
 def main():
     df = load_data(DATA_PATH)
 
-    # 결측치 처리 함수 호출
+    # 기능 1: 결측치 처리
     df = handle_missing(df)
+
+    # 기능 2: 이상치 처리
+    df = handle_outliers(df)
 
 
 if __name__ == "__main__":
