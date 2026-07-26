@@ -52,8 +52,42 @@ def explore_structure(df):
     print(df.head(5))
 
 
+def show_statistics(df):
+    """수치형 컬럼의 기술통계와 컬럼별 평균을 출력합니다."""
+
+    # count: 결측치를 제외한 데이터 개수
+    # mean: 평균값
+    # std: 표준편차
+    # min: 최솟값
+    # 25%: 하위 25% 지점의 값
+    # 50%: 중앙값
+    # 75%: 하위 75% 지점의 값
+    # max: 최댓값
+
+    numeric_df = df.select_dtypes(include="number")
+
+    print("\n" + "=" * 50)
+    print("5. 수치형 컬럼 기술통계")
+    print("=" * 50)
+
+    if numeric_df.empty:
+        print("수치형 컬럼이 없습니다.")
+        return
+
+    print(numeric_df.describe())
+
+    print("\n" + "=" * 50)
+    print("6. 수치형 컬럼별 평균")
+    print("=" * 50)
+
+    for column in numeric_df.columns:
+        average = numeric_df[column].mean()
+        print(f"{column}: {round(average, 2)}")
+
+
 if __name__ == "__main__":
     data_path = os.path.join("data", "student_habits.csv")
 
     df = load_data(data_path)
     explore_structure(df)
+    show_statistics(df)
