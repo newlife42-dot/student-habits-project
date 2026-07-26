@@ -85,9 +85,55 @@ def show_statistics(df):
         print(f"{column}: {round(average, 2)}")
 
 
+def check_missing(df):
+    """컬럼별 결측치 수와 비율, 심각도를 출력하고 딕셔너리로 반환합니다."""
+
+    missing_result = {}
+    total_rows = len(df)
+
+    print("\n" + "=" * 50)
+    print("7. 결측치 현황")
+    print("=" * 50)
+
+    missing_counts = df.isnull().sum()
+
+    for column in df.columns:
+        missing_count = int(missing_counts[column])
+
+        if missing_count == 0:
+            continue
+
+        missing_ratio = missing_count / total_rows * 100
+
+        if missing_ratio < 5:
+            severity = "낮음"
+        elif missing_ratio < 20:
+            severity = "주의"
+        else:
+            severity = "높음"
+
+        missing_result[column] = {
+            "결측치 수": missing_count,
+            "결측치 비율": round(missing_ratio, 2),
+            "심각도": severity,
+        }
+
+        print(f"컬럼명: {column}")
+        print(f"결측치 수: {missing_count}개")
+        print(f"결측치 비율: {missing_ratio:.2f}%")
+        print(f"심각도: {severity}")
+        print("-" * 50)
+
+    if not missing_result:
+        print("결측치가 있는 컬럼이 없습니다.")
+
+    return missing_result
+
+
 if __name__ == "__main__":
     data_path = os.path.join("data", "student_habits.csv")
 
     df = load_data(data_path)
     explore_structure(df)
     show_statistics(df)
+    missing_result = check_missing(df)
