@@ -269,5 +269,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    # 기능 5
-    numpy_result = numpy_stats(df, "study_hours")
+
