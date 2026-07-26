@@ -313,3 +313,13 @@ def handle_missing(df):
     print(f"결측치 처리 후 남은 결측치: {remaining_missing}개")
 
     return processed_df
+
+def main():
+    df = load_data(DATA_PATH)
+
+    # 결측치 처리 함수 호출
+    df = handle_missing(df)
+
+
+if __name__ == "__main__":
+    main()
