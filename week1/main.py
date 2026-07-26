@@ -238,30 +238,36 @@ def numpy_stats(df, column="study_hours"):
 
 
 # ==================================================
-# 프로그램 실행
+# 기능 6: main() 함수로 전체 기능 연결
 # ==================================================
-if __name__ == "__main__":
-    # main.py 파일의 위치를 기준으로 프로젝트 폴더 경로 계산
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    project_directory = os.path.dirname(current_directory)
 
-    data_path = os.path.join(
-        project_directory,
-        "data",
-        "student_habits.csv",
-    )
+DATA_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "data",
+    "student_habits.csv",
+)
 
-    # 기능 1
-    df = load_data(data_path)
 
-    # 기능 2
+def main():
+    """데이터 분석 기능을 순서대로 실행합니다."""
+
+    # 기능 1: 데이터 불러오기
+    df = load_data(DATA_PATH)
+
+    # 기능 2: 데이터 구조 확인
     explore_structure(df)
 
-    # 기능 3
+    # 기능 3: 기술통계 출력
     show_statistics(df)
 
-    # 기능 4
-    missing_result = check_missing(df)
+    # 기능 4: 결측치 현황 파악
+    check_missing(df)
 
+    # 기능 5: NumPy로 통계량 계산
+    numpy_stats(df, "study_hours")
+
+
+if __name__ == "__main__":
+    main()
     # 기능 5
     numpy_result = numpy_stats(df, "study_hours")
