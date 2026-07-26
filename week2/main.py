@@ -270,3 +270,46 @@ def main():
 if __name__ == "__main__":
     main()
 
+# ==================================================
+# Week2
+# ==================================================
+def handle_missing(df):
+    """결측치를 중앙값으로 대체하고 처리 결과를 반환합니다."""
+
+    # 원본 DataFrame을 보존하기 위해 복사
+    processed_df = df.copy()
+
+    # 결측치를 처리할 컬럼 목록
+    target_columns = [
+        "sleep_hours",
+        "phone_hours",
+        "exercise_hours",
+    ]
+
+    print("\n" + "=" * 60)
+    print("1. 결측치 처리")
+    print("=" * 60)
+
+    for column in target_columns:
+        if column not in processed_df.columns:
+            print(f"{column}: 컬럼이 존재하지 않습니다.")
+            continue
+
+        missing_count = processed_df[column].isnull().sum()
+        median_value = processed_df[column].median()
+
+        # 결측치를 해당 컬럼의 중앙값으로 대체
+        processed_df[column] = processed_df[column].fillna(median_value)
+
+        print(f"{column}")
+        print(f"- 처리 전 결측치: {missing_count}개")
+        print(f"- 대체 중앙값: {median_value:.2f}")
+        print(f"- 처리 후 결측치: {processed_df[column].isnull().sum()}개")
+
+    # 전체 DataFrame에 남아 있는 결측치 개수
+    remaining_missing = processed_df.isnull().sum().sum()
+
+    print("-" * 60)
+    print(f"결측치 처리 후 남은 결측치: {remaining_missing}개")
+
+    return processed_df
