@@ -23,6 +23,37 @@ def load_data(file_path):
     return df
 
 
+def explore_structure(df):
+    """DataFrame의 행·열 수, 컬럼명, 자료형, 상위 5행을 출력합니다."""
+
+    rows, columns = df.shape
+
+    print("\n" + "=" * 50)
+    print("1. 데이터 크기")
+    print("=" * 50)
+    print(f"전체 행 수: {rows}행")
+    print(f"전체 열 수: {columns}열")
+
+    print("\n" + "=" * 50)
+    print("2. 컬럼 이름")
+    print("=" * 50)
+
+    for number, column in enumerate(df.columns, start=1):
+        print(f"{number}. {column}")
+
+    print("\n" + "=" * 50)
+    print("3. 컬럼별 자료형")
+    print("=" * 50)
+    print(df.dtypes)
+
+    print("\n" + "=" * 50)
+    print("4. 상위 5개 데이터")
+    print("=" * 50)
+    print(df.head(5))
+
+
 if __name__ == "__main__":
     data_path = os.path.join("data", "student_habits.csv")
+
     df = load_data(data_path)
+    explore_structure(df)
