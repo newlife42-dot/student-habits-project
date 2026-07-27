@@ -379,6 +379,100 @@ def handle_outliers(df):
 
     return processed_df
 
+def convert_types(df):
+    """gender 컬럼을 0과 1로 인코딩해 gender_code 컬럼을 추가합니다."""
+
+    processed_df = df.copy()
+
+    print("\n" + "=" * 60)
+    print("3. 자료형 인코딩")
+    print("=" * 60)
+
+    if "gender" not in processed_df.columns:
+        print("gender 컬럼이 존재하지 않습니다.")
+        return processed_df
+
+    print(f"변환 전 gender 고유값: {processed_df['gender'].unique()}")
+
+    # gender가 '여'일 때 1, 그 외에는 0
+    processed_df["gender_code"] = (
+        processed_df["gender"] == "여"
+    ).astype(int)
+
+    print(
+        "gender_code 고유값:",
+        processed_df["gender_code"].unique(),
+    )
+
+    print("자료형 인코딩 완료")
+
+    return processed_df
+
+def add_features(df):
+    """기존 컬럼을 활용해 3개의 파생변수를 생성합니다."""
+
+    processed_df = df.copy()
+
+    print("\n" + "=" * 60)
+    print("4. 파생변수 생성")
+    print("=" * 60)
+
+    required_columns = [
+        "study_hours",
+        "exercise_hours",
+        "sleep_hours",
+        "phone_hours",
+    ]
+
+    missing_columns = [
+        column
+        for column in required_columns
+        if column not in processed_df.columns
+    ]
+
+    if missing_columns:
+        print(
+            "필요한 컬럼이 존재하지 않습니다:",
+            missing_columns,
+        )
+        return processed_df
+
+    # 공부 시간 + 운동 시간
+    processed_df["productive_hours"] = (
+        processed_df["study_hours"]
+        + processed_df["exercise_hours"]
+    )
+
+    # 수면 시간이 7시간 이상이면 1, 아니면 0
+    processed_df["sleep_sufficient"] = (
+        processed_df["sleep_hours"] >= 7
+    ).astype(int)
+
+    # 스마트폰 사용 시간이 4시간을 초과하면 1, 아니면 0
+    processed_df["phone_overuse"] = (
+        processed_df["phone_hours"] > 4
+    ).astype(int)
+
+    print("생성된 파생변수:")
+    print("- productive_hours")
+    print("- sleep_sufficient")
+    print("- phone_overuse")
+
+    print("\n파생변수 상위 5행:")
+    print(
+        processed_df[
+            [
+                "productive_hours",
+                "sleep_sufficient",
+                "phone_overuse",
+            ]
+        ].head()
+    )
+
+    print("파생변수 생성 완료")
+
+    return processed_df
+
 def main():
     df = load_data(DATA_PATH)
 
@@ -387,6 +481,12 @@ def main():
 
     # 기능 2: 이상치 처리
     df = handle_outliers(df)
+
+    # 기능 3: 자료형 인코딩
+    df = convert_types(df)
+
+    # 기능 4: 파생변수 생성
+    df = add_features(df)
 
 
 if __name__ == "__main__":
