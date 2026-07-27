@@ -473,8 +473,34 @@ def add_features(df):
 
     return processed_df
 
+# ==================================================
+# 파일 경로 상수
+# ==================================================
+PROJECT_DIR = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
+
+INPUT_PATH = os.path.join(
+    PROJECT_DIR,
+    "data",
+    "student_habits.csv",
+)
+
+OUTPUT_PATH = os.path.join(
+    PROJECT_DIR,
+    "data",
+    "student_habits_clean.csv",
+)
+
+
+# ==================================================
+# 기능 5: 전체 연결 및 저장
+# ==================================================
 def main():
-    df = load_data(DATA_PATH)
+    """전처리 기능을 순서대로 실행하고 결과를 CSV로 저장합니다."""
+
+    # 원본 데이터 불러오기
+    df = load_data(INPUT_PATH)
 
     # 기능 1: 결측치 처리
     df = handle_missing(df)
@@ -487,6 +513,19 @@ def main():
 
     # 기능 4: 파생변수 생성
     df = add_features(df)
+
+    # 전처리 결과 저장
+    df.to_csv(
+        OUTPUT_PATH,
+        index=False,
+        encoding="utf-8-sig",
+    )
+
+    print("\n" + "=" * 60)
+    print("전처리 데이터 저장 완료")
+    print("=" * 60)
+    print(f"저장 경로: {OUTPUT_PATH}")
+    print(f"최종 데이터 크기: {df.shape[0]}행 × {df.shape[1]}열")
 
 
 if __name__ == "__main__":
